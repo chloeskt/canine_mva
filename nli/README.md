@@ -5,11 +5,33 @@ We are interested in Natural Language Inference (NLI) on medical data using CANI
 ## Data 
 Access for the data can be requested [here](https://jgc128.github.io/mednli/). It contains a training, validation and test set with pairs of sentences along with the label of their relation. The data must be placed in the folder `data/` . 
 
-## Fine-tuned models
+## NLI
 To use our fine-tuned BERT and CANINE models on MedNLI, you can download the weights in this [link](), and you should place them in the folder `trained-models/`.
+To train a new model on MedNLI you can run the following command
+```
+cd canine-mednli/nli
+python main.py --model canine --noisy False
+```
+
+## Noise robustness
+Since CANINE doesn't use a fixed vocabulary, it can be intresting to use it on noisy data where there are many out-of-vocabulary words, mispellings and errors. We provide code to generate noisy versions of MedNLI for a given noise level, by adding, deleting replacing and swapping letters in the words. You can run the following commands:
+
+```
+cd canine-mednli/nli/utils
+python noisy_data.py --noise_level 0.4
+```
+
+To train and evaluate CANINE on noisy data, you can run:
+
+```
+cd canine-mednli/nli
+python main.py --model canine --noisy True 
+```
+
+For the NLI task on clean MedNLI we get an accuracy of 77.6% using BERT and an accuracy of 73.07% using CANINE. However when we add a noise with probability 0.4 to the test data, the performance of BERT drops to 59.92 while the accuarcy of CANINE drops only to 65.75. Training the models on noisy data results in an improvement for both models but CANINE is still preferred to BERT with a 1.4% difference in accuracy. This suggest that CANINE can be more suitable for noisy text than BERT, but for clean data we didn't see and advantadge for CANINE in this task.
 
 To do: 
  - [ ] add link to model weights
  - [ ] add table of results nstead of text
  - [ ] change .pth to .pt in path models
- - [ ] check code
+ - [ ] check all code
