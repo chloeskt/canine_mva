@@ -1,0 +1,209 @@
+from typing import Dict, List, Union
+
+import datasets
+from transformers import PreTrainedTokenizer
+
+
+class TokenizedDataset:
+    def __init__(
+        self, tokenizer: PreTrainedTokenizer, max_length: int, doc_stride: int
+    ) -> None:
+        self.tokenizer = tokenizer
+        self.max_length = max_length
+        self.doc_stride = doc_stride
+        self.pad_on_right = tokenizer.padding_side == "right"
+
+    def tokenize(
+        self, data: datasets.arrow_dataset.Dataset
+    ) -> Dict[str, Union[List[List[int]], List[int]]]:
+        # Some of the questions have lots of whitespace on the left, which is not useful and will make the
+        # truncation of the context fail (the tokenized question will take a lots of space). So we remove that
+        # left whitespace
+        data["question"] = [q.lstrip() for q in data["question"]]
+
+        # Tokenize our data with truncation and padding, but keep the overflows using a stride. This results
+        # in one example possible giving several features when a context is long, each of those features having a
+        # context that overlaps a bit the context of the previous feature.
+        tokenized_examples = self.tokenizer(
+            data["question" if self.pad_on_right else "context"],
+            data["context" if self.pad_on_right else "question"],
+            truncation="only_second" if self.pad_on_right else "only_first",
+            max_length=self.max_length,
+            stride=self.doc_stride,
+            return_overflowing_tokens=True,
+            padding="max_length",
+        )
+
+        final_input_ids = []
+        final_attention_masks = []
+        final_token_type_ids = []
+        final_start_positions = []
+        final_end_positions = []
+        final_example_id = []
+
+        for i, input_ids in enumerate(tokenized_examples["input_ids"]):
+            # get example id needed for evaluation purposes
+            final_example_id.append(data["id"][i])
+
+            # We will label impossible answers with the index of the CLS token.
+            cls_index = input_ids.index(self.tokenizer.cls_token_id)
+            final_input_ids.append(input_ids)
+            answers = data["answers"][i]
+
+            try:
+                rep = data["context"][i][
+                    answers["answer_start"][0] : answers["answer_end"][0]
+                ]
+                # rep = data["answers"]["text"][0]
+            except IndexError:
+                rep = ""
+
+            # attention_mask
+            final_attention_masks.append(tokenized_examples["attention_mask"][i])
+
+            # token_type_ids
+            final_token_type_ids.append(tokenized_examples["token_type_ids"][i])
+
+            # compute question length
+            sep_index = input_ids.index(self.tokenizer.sep_token_id)
+            question_length = len(input_ids[: sep_index + 1])
+
+            # If no answers are given, set the cls_index as answer.
+            if len(answers["answer_start"]) == 0 & len(answers["answer_end"]) == 0:
+                final_start_positions.append(cls_index)
+                final_end_positions.append(cls_index)
+            elif answers["answer_end"][0] <= self.max_length - question_length - 1:
+                start_position = answers["answer_start"][0] + question_length
+                final_start_positions.append(start_position)
+                end_position = answers["answer_end"][0] + question_length
+                final_end_positions.append(end_position)
+            else:
+                final_start_positions.append(cls_index)
+                final_end_positions.append(cls_index)
+
+            ac = self.tokenizer.decode(
+                final_input_ids[-1][final_start_positions[-1] : final_end_positions[-1]]
+            )
+
+            is_in_first_part = False
+            is_in_second_part = False
+            ac_overflow = None
+            if rep == ac:
+                is_in_first_part = True
+
+            # now if for this example we have an overflow
+            # create new example with this overflow
+            # TODO: handle cases where more than 1 overflow is required
+            if len(tokenized_examples["overflowing_tokens"][i]) != 0:
+
+                # get example id needed for evaluation purposes
+                final_example_id.append(data["id"][i])
+
+                overflow = tokenized_examples["overflowing_tokens"][i]
+
+                # retrieve question to be added at the beginning overflow_input_ids
+                sep_index = input_ids.index(self.tokenizer.sep_token_id)
+                tokens_question = input_ids[: sep_index + 1]  # +1 to get the SEP
+                overflow_input_ids = tokens_question + overflow
+
+                # truncate to max_length-1,  -1 to be able to add SEP at the end
+                overflow_input_ids = overflow_input_ids[: self.max_length - 1]
+
+                # attention mask
+                attention_mask = [1] * (len(overflow_input_ids) + 1) + [0] * (
+                    self.max_length - len(overflow_input_ids)
+                )
+                # truncate if needed
+                attention_mask = attention_mask[: self.max_length]
+
+                final_attention_masks.append(attention_mask)
+
+                # token_type_ids: 0 if question, 1 if context, 0 if padding
+                token_type_ids = (
+                    [0] * len(tokens_question)
+                    + [1] * (len(overflow) + 1)
+                    + [0] * (self.max_length - len(overflow_input_ids))
+                )[: self.max_length]
+                final_token_type_ids.append(token_type_ids)
+
+                # pad input_ids if necessary
+                sep_id = self.tokenizer.sep_token_id
+                overflow_input_ids = (
+                    overflow_input_ids
+                    + [sep_id]
+                    + [0] * (self.max_length - len(overflow_input_ids) - 1)
+                )[: self.max_length]
+
+                # add in input_ids the context
+                final_input_ids.append(overflow_input_ids)
+
+                start_character_in_context = (
+                    self.max_length - 1 - len(tokens_question) - self.doc_stride
+                )
+
+                # If no answers are given, set the cls_index as answer.
+                if len(answers["answer_start"]) == 0 & len(answers["answer_end"]) == 0:
+                    final_start_positions.append(cls_index)
+                    final_end_positions.append(cls_index)
+                elif (
+                    answers["answer_start"][0] >= start_character_in_context
+                    and answers["answer_end"][0]
+                    < self.max_length
+                    - len(tokens_question)
+                    - 1
+                    + start_character_in_context
+                ):
+                    relative_start = (
+                        answers["answer_start"][0]
+                        - start_character_in_context
+                        + len(tokens_question)
+                    )
+
+                    relative_end = (
+                        answers["answer_end"][0]
+                        - start_character_in_context
+                        + len(tokens_question)
+                    )
+
+                    final_start_positions.append(relative_start)
+                    final_end_positions.append(relative_end)
+                else:
+                    final_start_positions.append(cls_index)
+                    final_end_positions.append(cls_index)
+
+                ac_overflow = self.tokenizer.decode(
+                    final_input_ids[-1][
+                        final_start_positions[-1] : final_end_positions[-1]
+                    ]
+                )
+                if rep == ac_overflow:
+                    is_in_second_part = True
+
+            if not is_in_first_part and not is_in_second_part:
+                print()
+                print("\033[91mERROR WITH PREDICTION OF: \033[0m")
+                print("True answer: ")
+                print(f">{rep}<")
+                print("context", data["context"][i])
+                print("question", data["question"][i])
+                print(answers)
+                print(f"answer computed ac>{ac}<")
+                print(f"answer computed ac_overflow>{ac_overflow}<<<<<<")
+
+        seen_ids = []
+        for id in final_example_id:
+            if id not in seen_ids:
+                seen_ids.append(id)
+            else:
+                if id != seen_ids[-1]:
+                    print(id)
+                    raise
+
+        return {
+            "input_ids": final_input_ids,
+            "attention_mask": final_attention_masks,
+            "token_type_ids": final_token_type_ids,
+            "start_positions": final_start_positions,
+            "end_positions": final_end_positions,
+            "example_id": final_example_id,
+        }
