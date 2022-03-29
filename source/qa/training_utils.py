@@ -27,6 +27,7 @@ def train(
     metric: Any,
     learning_rate: float,
     max_answer_length: int,
+    n_best_size: int,
     best_f1: float = np.Inf,
     lr_scheduler=None,
     drive: bool = True,
@@ -94,6 +95,7 @@ def train(
             batch_size,
             metric,
             max_answer_length,
+            n_best_size,
             squad_v2,
         )  # Compute validation loss
         print()
@@ -135,6 +137,7 @@ def evaluate(
     batch_size: int,
     metric: Any,
     max_answer_length: int,
+    n_best_size: int,
     squad_v2: bool = True,
 ) -> Tuple[Union[float, Any], float, ndarray, ndarray]:
     # switch model out of training mode
@@ -211,7 +214,7 @@ def evaluate(
                 features_dataset,
                 outputs,
                 tokenizer,
-                n_best_size=20,
+                n_best_size=n_best_size,
                 max_answer_length=max_answer_length,
                 squad_v2=squad_v2,
             )
