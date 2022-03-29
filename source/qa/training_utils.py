@@ -11,7 +11,7 @@ from transformers import (
     PreTrainedTokenizer,
 )
 
-from source.qa import compute_metrics
+from source.qa import compute_metrics, postprocess_qa_predictions
 
 
 def train(
