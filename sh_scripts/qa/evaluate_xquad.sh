@@ -10,12 +10,15 @@ LANGUAGES=('xquad.en' 'xquad.ar' 'xquad.de' 'xquad.zh' 'xquad.vi' 'xquad.es' 'xq
 
 for lang in "${LANGUAGES[@]}"; do \
     python source/qa/evaluate_xquad.py \
-      --model_path /mnt/hdd/canine/models/canine-c/... \
+      --model_path /mnt/hdd/canine/models/canine_f1_70.pt \
       --language "$lang" \
       --squad_v2 \
       --max_answer_length 256 \
       --max_length 2048 \
       --doc_stride 512 \
       --n_best_size 20 \
-      --batch_size 12 ;
+      --batch_size 6 \
+      --device cuda ;
 done
+
+rm -rf canine_mva

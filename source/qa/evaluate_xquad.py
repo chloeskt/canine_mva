@@ -136,7 +136,7 @@ def evaluate_finetuned_model(
     )
     print("Loading model")
     model = CanineForQuestionAnswering.from_pretrained(model_checkpoint)
-    model.load_state_dict(torch.load(finetuned_model_path))
+    model.load_state_dict(torch.load(finetuned_model_path, map_location=device))
     model.to(device)
 
     print("Start evaluation")
@@ -158,9 +158,9 @@ def evaluate_finetuned_model(
 
 
 if __name__ == "__main__":
-    parser = HfArgumentParser((EvaluationArguments,))
-    args = parser.parse_args_into_dataclasses()
-
+    parser = HfArgumentParser(EvaluationArguments)
+    args = parser.parse_args_into_dataclasses()[0]
+    
     print(f"Evaluation script for language {args.language}")
     val_acc, val_loss, f1, exact_match = evaluate_finetuned_model(
         finetuned_model_path=args.model_path,
