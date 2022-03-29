@@ -21,7 +21,7 @@ on your hardware.
 
 # Structure of the repository
 
--``notebooks``: the notebooks we used for our experiments. 
+- ``notebooks``: the notebooks we used for our experiments. 
 - ``source/qa``: source code needed to prepare and train CANINE for Question Answering task (see application in the notebook
 ``squad_finetuning``)
 - ``sh_scripts/qa``: collection of bash scripts to finetune and evaluate models on QA tasks. 
