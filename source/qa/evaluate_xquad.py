@@ -127,6 +127,9 @@ def evaluate_finetuned_model(
     metric = load_metric("squad_v2" if squad_v2 else "squad")
 
     # initialize validation set data loader
+    tokenized_datasets["validation"].set_format(
+        "torch"
+    )  # set into pytorch format for dataloader
     val_loader = DataLoader(
         tokenized_datasets["validation"],
         batch_size=batch_size,
@@ -134,6 +137,7 @@ def evaluate_finetuned_model(
         drop_last=True,
         num_workers=0,
     )
+
     print("Loading model")
     model = CanineForQuestionAnswering.from_pretrained(model_checkpoint)
     model.load_state_dict(torch.load(finetuned_model_path, map_location=device))
@@ -183,5 +187,7 @@ if __name__ == "__main__":
         "Validation Exact Match:",
         exact_match,
     )
-    print("---------------------------------------------------------------------------------------------------------")
+    print(
+        "---------------------------------------------------------------------------------------------------------"
+    )
     print()
