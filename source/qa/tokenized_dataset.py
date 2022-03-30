@@ -51,10 +51,7 @@ class TokenizedDataset:
             answers = data["answers"][i]
 
             try:
-                rep = data["context"][i][
-                    answers["answer_start"][0] : answers["answer_end"][0]
-                ]
-                # rep = data["answers"]["text"][0]
+                rep = answers["text"][0]
             except IndexError:
                 rep = ""
 
