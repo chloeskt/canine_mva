@@ -132,7 +132,7 @@ def evaluate_finetuned_model(
         batch_size=batch_size,
         shuffle=False,
         drop_last=True,
-        num_workers=2,
+        num_workers=0,
     )
     print("Loading model")
     model = CanineForQuestionAnswering.from_pretrained(model_checkpoint)
@@ -160,7 +160,7 @@ def evaluate_finetuned_model(
 if __name__ == "__main__":
     parser = HfArgumentParser(EvaluationArguments)
     args = parser.parse_args_into_dataclasses()[0]
-    
+
     print(f"Evaluation script for language {args.language}")
     val_acc, val_loss, f1, exact_match = evaluate_finetuned_model(
         finetuned_model_path=args.model_path,
