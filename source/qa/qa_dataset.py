@@ -18,16 +18,12 @@ class QADataset(Dataset):
         input_ids = self.tokenized_dataset["input_ids"][index]
         attention_mask = self.tokenized_dataset["attention_mask"][index]
         token_type_ids = self.tokenized_dataset["token_type_ids"][index]
-
-        if self.type == "train":
-            start_positions = self.tokenized_dataset["start_positions"][index]
-            end_positions = self.tokenized_dataset["end_positions"][index]
-            return (
-                input_ids,
-                attention_mask,
-                token_type_ids,
-                start_positions,
-                end_positions,
-            )
-        else:
-            return input_ids, attention_mask, token_type_ids
+        start_positions = self.tokenized_dataset["start_positions"][index]
+        end_positions = self.tokenized_dataset["end_positions"][index]
+        return (
+            input_ids,
+            attention_mask,
+            token_type_ids,
+            start_positions,
+            end_positions,
+        )

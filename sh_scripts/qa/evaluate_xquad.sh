@@ -10,7 +10,7 @@ LANGUAGES=('xquad.en' 'xquad.ar' 'xquad.de' 'xquad.zh' 'xquad.vi' 'xquad.es' 'xq
 
 for lang in "${LANGUAGES[@]}"; do \
     python source/qa/evaluate_xquad.py \
-      --model_path /mnt/hdd/canine/models/canine_f1_70.pt \
+      --model_path /mnt/hdd/canine/models/canine_model.pt \
       --language "$lang" \
       --squad_v2 \
       --max_answer_length 256 \

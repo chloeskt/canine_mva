@@ -6,12 +6,19 @@ from transformers import PreTrainedTokenizer
 
 class TokenizedDataset:
     def __init__(
-        self, tokenizer: PreTrainedTokenizer, max_length: int, doc_stride: int
+        self,
+        tokenizer: PreTrainedTokenizer,
+        max_length: int,
+        doc_stride: int,
+        squad_v2: bool,
+        language: str = "en",
     ) -> None:
         self.tokenizer = tokenizer
         self.max_length = max_length
         self.doc_stride = doc_stride
         self.pad_on_right = tokenizer.padding_side == "right"
+        self.language = language
+        self.squad_v2 = squad_v2
 
     def tokenize(
         self, data: datasets.arrow_dataset.Dataset
@@ -51,10 +58,10 @@ class TokenizedDataset:
             answers = data["answers"][i]
 
             try:
-                rep = data["context"][i][
-                    answers["answer_start"][0] : answers["answer_end"][0]
-                ]
-                # rep = data["answers"]["text"][0]
+                # rep = data["context"][i][
+                #     answers["answer_start"][0] : answers["answer_end"][0]
+                # ]
+                rep = answers["text"][0]
             except IndexError:
                 rep = ""
 
@@ -187,8 +194,160 @@ class TokenizedDataset:
                 print("context", data["context"][i])
                 print("question", data["question"][i])
                 print(answers)
-                print(f"answer computed ac>{ac}<")
-                print(f"answer computed ac_overflow>{ac_overflow}<<<<<<")
+                print(f"answer computed ac >{ac}<")
+                print(f"answer computed ac_overflow >{ac_overflow}<")
+
+                # handle special cases depending on language
+                if self.squad_v2:
+                    languages = ["vi", "ar", "zh", "es", "hi", "ru"]
+                else:
+                    languages = ["vi", "en", "ar", "zh", "es", "hi", "ru"]
+                if self.language in languages:
+                    print()
+                    print("\033[91mTRYING TO FIX PREDICTIONS: \033[0m")
+                    if len(tokenized_examples["overflowing_tokens"][i]) == 0:
+                        # no overflow
+                        final_start_positions[-1] -= 1
+                        final_end_positions[-1] -= 1
+
+                        ac = self.tokenizer.decode(
+                            final_input_ids[-1][
+                                final_start_positions[-1] : final_end_positions[-1]
+                            ]
+                        )
+                        print(f"new computed answer: >{ac}<")
+
+                        if ac == rep:
+                            pass
+                        else:
+                            # in arabic somethimes two letters are actually missing
+                            if self.language == "ar":
+                                final_start_positions[-1] -= 1
+                                final_end_positions[-1] -= 1
+
+                                ac = self.tokenizer.decode(
+                                    final_input_ids[-1][
+                                        final_start_positions[-1] : final_end_positions[
+                                            -1
+                                        ]
+                                    ]
+                                )
+                    else:
+                        # there is an overflow, need to know if the answer
+                        # is in the overflow or in the first part or in both
+                        if ac and ac_overflow:
+                            # it is in both
+                            final_start_positions[-2] -= 1
+                            final_end_positions[-2] -= 1
+                            final_start_positions[-1] -= 1
+                            final_end_positions[-1] -= 1
+
+                            ac = self.tokenizer.decode(
+                                final_input_ids[-2][
+                                    final_start_positions[-2] : final_end_positions[-2]
+                                ]
+                            )
+                            print(f"new computed answer instead of ac : >{ac}<")
+                            ac_overflow = self.tokenizer.decode(
+                                final_input_ids[-1][
+                                    final_start_positions[-1] : final_end_positions[-1]
+                                ]
+                            )
+                            print(
+                                f"new computed answer instead of ac_overflow: >{ac_overflow}<"
+                            )
+
+                            if ac == rep and ac_overflow == rep:
+                                pass
+                            else:
+                                # in arabic somethimes two letters are actually missing
+                                if self.language == "ar":
+                                    final_start_positions[-2] -= 1
+                                    final_end_positions[-2] -= 1
+                                    final_start_positions[-1] -= 1
+                                    final_end_positions[-1] -= 1
+
+                                    ac = self.tokenizer.decode(
+                                        final_input_ids[-2][
+                                            final_start_positions[
+                                                -2
+                                            ] : final_end_positions[-2]
+                                        ]
+                                    )
+                                    ac_overflow = self.tokenizer.decode(
+                                        final_input_ids[-1][
+                                            final_start_positions[
+                                                -1
+                                            ] : final_end_positions[-1]
+                                        ]
+                                    )
+
+                        elif ac is not None and (
+                            ac_overflow is None or ac_overflow == ""
+                        ):
+                            # only in the first part:
+                            final_start_positions[-2] -= 1
+                            final_end_positions[-2] -= 1
+
+                            ac = self.tokenizer.decode(
+                                final_input_ids[-2][
+                                    final_start_positions[-2] : final_end_positions[-2]
+                                ]
+                            )
+                            print(f"new computed answer: >{ac}<")
+
+                            if ac == rep:
+                                pass
+                            else:
+                                if self.language == "ar":
+                                    final_start_positions[-2] -= 1
+                                    final_end_positions[-2] -= 1
+
+                                    ac = self.tokenizer.decode(
+                                        final_input_ids[-2][
+                                            final_start_positions[
+                                                -2
+                                            ] : final_end_positions[-2]
+                                        ]
+                                    )
+
+                        elif (ac is None or ac == "") and ac_overflow is not None:
+                            # only in the overflow
+                            final_start_positions[-1] -= 1
+                            final_end_positions[-1] -= 1
+
+                            ac_overflow = self.tokenizer.decode(
+                                final_input_ids[-1][
+                                    final_start_positions[-1] : final_end_positions[-1]
+                                ]
+                            )
+                            print(f"new computed answer: >{ac_overflow}<")
+
+                            if ac_overflow == rep:
+                                pass
+                            else:
+                                if self.language == "ar":
+                                    final_start_positions[-1] -= 1
+                                    final_end_positions[-1] -= 1
+
+                                    ac_overflow = self.tokenizer.decode(
+                                        final_input_ids[-1][
+                                            final_start_positions[
+                                                -1
+                                            ] : final_end_positions[-1]
+                                        ]
+                                    )
+
+                        else:
+                            raise NotImplementedError
+                    # make again the check with rep
+                    if rep == ac or rep == ac_overflow:
+                        print("\033[92mSECOND CHECK DID PASS \033[0m")
+                    else:
+                        print("\033[91mSECOND CHECK DID NOT PASS: \033[0m")
+                        print("True text: ", rep)
+                        print(f"answer computed ac >{ac}<")
+                        print(f"answer computed ac_overflow >{ac_overflow}<")
 
         seen_ids = []
         for id in final_example_id:
