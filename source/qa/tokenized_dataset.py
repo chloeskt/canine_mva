@@ -10,6 +10,7 @@ class TokenizedDataset:
         tokenizer: PreTrainedTokenizer,
         max_length: int,
         doc_stride: int,
+        squad_v2: bool,
         language: str = "en",
     ) -> None:
         self.tokenizer = tokenizer
@@ -17,6 +18,7 @@ class TokenizedDataset:
         self.doc_stride = doc_stride
         self.pad_on_right = tokenizer.padding_side == "right"
         self.language = language
+        self.squad_v2 = squad_v2
 
     def tokenize(
         self, data: datasets.arrow_dataset.Dataset
@@ -195,10 +197,14 @@ class TokenizedDataset:
                 print(f"answer computed ac >{ac}<")
                 print(f"answer computed ac_overflow >{ac_overflow}<")
 
-                print()
-                print("\033[91mTRYING TO FIX PREDICTIONS: \033[0m")
                 # handle special cases depending on language
-                if self.language in ["vi", "en", "ar", "zh", "es", "hi", "ru"]:
+                if self.squad_v2:
+                    languages = ["vi", "ar", "zh", "es", "hi", "ru"]
+                else:
+                    languages = ["vi", "en", "ar", "zh", "es", "hi", "ru"]
+                if self.language in languages:
+                    print()
+                    print("\033[91mTRYING TO FIX PREDICTIONS: \033[0m")
                     if len(tokenized_examples["overflowing_tokens"][i]) == 0:
                         # no overflow
                         final_start_positions[-1] -= 1
@@ -334,14 +340,14 @@ class TokenizedDataset:
 
                         else:
                             raise NotImplementedError
-                # make again the check with rep
-                if rep == ac or rep == ac_overflow:
-                    print("\033[92mSECOND CHECK DID PASS \033[0m")
-                else:
-                    print("\033[91mSECOND CHECK DID NOT PASS: \033[0m")
-                    print("True text: ", rep)
-                    print(f"answer computed ac >{ac}<")
-                    print(f"answer computed ac_overflow >{ac_overflow}<")
+                    # make again the check with rep
+                    if rep == ac or rep == ac_overflow:
+                        print("\033[92mSECOND CHECK DID PASS \033[0m")
+                    else:
+                        print("\033[91mSECOND CHECK DID NOT PASS: \033[0m")
+                        print("True text: ", rep)
+                        print(f"answer computed ac >{ac}<")
+                        print(f"answer computed ac_overflow >{ac_overflow}<")
 
         seen_ids = []
         for id in final_example_id:
