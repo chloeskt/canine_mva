@@ -28,3 +28,11 @@ results based on the original tensorflow code.
 - ```sh_scripts/qa```: bash scripts to train BERT, mBERT and XLM-ROBERTA on SQuAD like datasets. Bash script to
 automatically evaluate CANINE on XQuAD rather than using the notebook (``canine_evaluate_xquad.sh``). Finally, a script 
 to evaluate BERT-like models (**must already have been finetuned**) on XQuAD dataset (``bert_like_evaluate_xquad.sh``).
+
+## Finetuned models
+
+## Results/Observations
+
+To do: 
+ - [ ] add description of tasks
+ - [ ] add finetuned models path
