@@ -9,7 +9,7 @@ cd canine_mva
 LANGUAGES=('xquad.en' 'xquad.ar' 'xquad.de' 'xquad.zh' 'xquad.vi' 'xquad.es' 'xquad.hi' 'xquad.el' 'xquad.th' 'xquad.tr' 'xquad.ru' 'xquad.ro')
 
 for lang in "${LANGUAGES[@]}"; do \
-    python source/qa/evaluate_xquad.py \
+    python source/qa/canine_evaluate_xquad.py \
       --model_path /mnt/hdd/canine/models/canine_model.pt \
       --language "$lang" \
       --squad_v2 \
