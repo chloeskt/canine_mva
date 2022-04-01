@@ -18,10 +18,30 @@ pip install -r requirements
 Please note that you will need to update manually the versions of ``torch``, ``torchaudio`` and ``torchvision`` depending
 on your hardware.
 
-
 # Structure of the repository
 
-- ``notebooks``: the notebooks we used for our experiments. 
+This repository has been divided into 3 main categories, each containing sub-categories depending on the task we evaluated
+the models on. 
+
+```
+canine_mva
+├── requirements.txt
+├── sh_scripts                  # Bash scripts
+    └── qa/                     # QA related bash scripts (CLI)
+├── source                      # Source code main package   
+    ├── qa/                     # QA related source code                               
+    └── nli/                    # NLI related source code        
+├── notebooks                   # Notebooks (showcase of experiments)
+    └── qa/                     # QA related notebooks
+└── README.md
+```
+
+## Question Answering:
+- ``notebooks/qa``: the notebooks we used for our QA experiments. 
 - ``source/qa``: source code needed to prepare and train CANINE for Question Answering task (see application in the notebook
 ``squad_finetuning``)
-- ``sh_scripts/qa``: collection of bash scripts to finetune and evaluate models on QA tasks. 
+- ``sh_scripts/qa``: collection of bash scripts to finetune and evaluate models on QA tasks.
+
+# NLI
+- ``source/nli``: source code needed to prepare and train CANINE and BERT for NLI task (for more information, refer to 
+corresponding ``README.md``)
