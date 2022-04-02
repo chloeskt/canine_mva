@@ -226,8 +226,6 @@ def evaluate(
                 squad_v2,
             )
 
-            loop.set_postfix(f1=metrics["f1"])
-
             f1_scores.append(metrics["f1"])
             if squad_v2:
                 exact_matches.append(metrics["exact"])

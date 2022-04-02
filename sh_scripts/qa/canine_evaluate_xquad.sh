@@ -12,7 +12,6 @@ for lang in "${LANGUAGES[@]}"; do \
     python source/qa/canine_evaluate_xquad.py \
       --model_path /mnt/hdd/canine/models/canine_model.pt \
       --language "$lang" \
-      --squad_v2 \
       --max_answer_length 256 \
       --max_length 2048 \
       --doc_stride 512 \
