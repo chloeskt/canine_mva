@@ -111,7 +111,7 @@ def evaluate_finetuned_model(
     # canine tokenizer
     model_checkpoint = "google/canine-c"
     tokenizer = CanineTokenizer.from_pretrained(model_checkpoint)
-    tokenizer_dataset = TokenizedDataset(tokenizer, max_length, doc_stride)
+    tokenizer_dataset = TokenizedDataset(tokenizer, max_length, doc_stride, squad_v2=squad_v2, language=language)
     print("Start tokenizing dataset")
     tokenized_datasets = datasets.map(
         tokenizer_dataset.tokenize,
