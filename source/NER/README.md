@@ -1,8 +1,12 @@
-This task was fully developped by Yujin CHO for Algorithms for Speech and Natural Language Processing course.
-It allow the user to train and test a CANINE model for NER task on ConLL2002/2003 dataset
-It also include a test of BERT model for NER task on ConLL2002/2003 (unfortunatelly the F1 score calculation need to be debuged with BERT model)
+# NER task on CANINE
+
+This task was fully developped by Yujin CHO :blush: for Algorithms for Speech and Natural Language Processing course of MVA.
+* It allow the user to train and test a CANINE model for NER task on ConLL2002/2003 dataset
+* It also include a test of BERT model for NER task on ConLL2002/2003 **(unfortunatelly the F1 score calculation need to be debuged for BERT model)**
 
 You need to launch main.py with the following options :
+```
+main.py
     --base_dir : Path to the pre computed weights
     --weight_name : name of the pre computed weights
     --model_type : CANINE or BERT
@@ -14,6 +18,10 @@ You need to launch main.py with the following options :
     --epochs : number of training epochs (only for CANINE)
     --train_lang : ES for espagnol, NL for Dutch and EN for English (only for CANINE)
     --eval_lang : ES for espagnol, NL for Dutch and EN for English
-    
+```
+
 to train a CANINE-C on English NER task, you can launch the following command :
+
+```
 !python3 main.py --model_type CANINE --canine_mode c --mode FULL --epochs 4 --train_lang EN --eval_lang EN
+```
