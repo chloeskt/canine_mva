@@ -30,7 +30,8 @@ canine_mva
     └── qa/                     # QA related bash scripts (CLI)
 ├── source                      # Source code main package   
     ├── qa/                     # QA related source code                               
-    └── nli/                    # NLI related source code        
+    └── nli/                    # NLI related source code  
+    └── NER/                    # NER related source code  
 ├── notebooks                   # Notebooks (showcase of experiments)
     └── qa/                     # QA related notebooks
 └── README.md
@@ -45,3 +46,6 @@ canine_mva
 # NLI
 - ``source/nli``: source code needed to prepare and train CANINE and BERT for NLI task (for more information, refer to 
 corresponding ``README.md``)
+
+# NER
+- ``source/NER``: source code needed to prepare and train CANINE for NER task (for more information, refer to corresponding ``README.md``)
