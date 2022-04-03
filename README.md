@@ -34,6 +34,7 @@ canine_mva
     └── NER/                    # NER related source code  
 ├── notebooks                   # Notebooks (showcase of experiments)
     └── qa/                     # QA related notebooks
+    └── NER/                    # NER related notebooks
 └── README.md
 ```
 
@@ -48,4 +49,5 @@ canine_mva
 corresponding ``README.md``)
 
 # NER
+- ``notebooks/NER``: the notebooks we used for our NER experiments. 
 - ``source/NER``: source code needed to prepare and train CANINE for NER task (for more information, refer to corresponding ``README.md``)
