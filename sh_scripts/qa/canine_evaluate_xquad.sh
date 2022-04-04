@@ -19,7 +19,7 @@ for LANG in "${LANGUAGES[@]}"; do \
       --max_length 2048 \
       --doc_stride 512 \
       --n_best_size 20 \
-      --batch_size 6 \
+      --batch_size 8 \
       --device cuda ;
 done
 
