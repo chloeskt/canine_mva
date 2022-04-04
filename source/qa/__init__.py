@@ -7,6 +7,12 @@ from source.qa.utils.utils import (
     postprocess_qa_predictions,
     compute_metrics,
     tokenize_context,
-    get_answer_character
+    get_answer_character,
 )
 from .processing.qa_dataset import QADataset
+from source.qa.utils.training_utils import (
+    train,
+    compute_metrics,
+    evaluate,
+    postprocess_qa_predictions,
+)
