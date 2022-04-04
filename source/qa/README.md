@@ -94,9 +94,30 @@ For further information, please refer to the corresponding ```README.md```.
 
 All finetuned models used in these experiments can be found [here](https://drive.google.com/drive/folders/1JVR6J8OjSTQ66fBseqHsSzoryTCQXVO_?usp=sharing).
 
+They were trained with the following parameters:
+
+|                               | **BERT** | **mBERT** | **XLM-RoBERTa** | **CANINE-C** | **CANINE-S** |
+|:-----------------------------:|:--------:|:---------:|:---------------:|:------------:|:------------:|
+| Training time for 1 epoch     | 1h42     | 1h39      | 2h03            | 4h28         | 4h13         |
+| Batch size                    | 6        | 6         | 6               | 6            | 6            |
+| Learning Rate                 | 3e-5     | 3e-5      | 3e-5            | 5e-5         | 5e-5         |
+| Weigh decay                   | 0        | 0         | 0               | 0.01         | 0.1          |
+| Nb of epochs                  | 2        | 4         | 4               | 2            | 6            |
+| Number of training examples   | 132335   | 132335    | 132335          | 130303       | 130303       |
+| Number of validation examples | 12245    | 12245     | 12245           | 11861        | 11861        |
+| Max length                    | 348      | 348       | 348             | 2048         | 2048         |
+| Doc stride                    | 128      | 128       | 128             | 512          | 512          |
+| Max answer length             | 30       | 30        | 30              | 256          | 256          |
+
+
 ## Results \& Observations
 
 ### Finetuning on SQuADv2
+
+|          | **CANINE-C** | **CANINE-S** | **mBERT** | **BERT** | **XLM-RoBERTa** |
+|:--------:|:------------:|:------------:|:---------:|:--------:|:---------------:|
+| F1-score | 74,1         | 70,3         | 77,51     | 76,02    | 78,3            |
+| EM score | 69,2         | 66,12        | 74,1      | 73,08    | 75,12           |
 
 In this settings, CANINE performs decently well  (especially CANINE-c i.e. CANINE trained with Autoregressive Character Loss).
 
@@ -108,6 +129,41 @@ engineered tokenizers (which often do not work well for some languages e.g. for 
 such as Thai or Chinese) and fixed vocabulary. The gap between XLM-RoBERTa and CANINE-C increases when evaluated on 
 languages such as Vietnamese, Thai or Chinese. These languages are mostly isolating ones i.e. language with a morpheme 
 per word ratio close to one and almost no inflectional morphology.
+
+#### F1 scores:
+|            | **CANINE-C** | **CANINE-S** | **mBERT-base** | **BERT-base** | **XLM-RoBERTa** |
+|:----------:|:------------:|:------------:|:--------------:|:-------------:|:---------------:|
+| English    | 78,77        | 79,03        | 83,59          | 82,3          | 82,8            |
+| Arabic     | 43,78        | 29,74        | 54,09          | 11,76         | 62,48           |
+| German     | 59,57        | 55,35        | 68,4           | 19,41         | 72,47           |
+| Greek      | 46,93        | 30,82        | 56,47          | 10,21         | 70,93           |
+| Spanish    | 60,47        | 59,48        | 72,84          | 19,72         | 75,18           |
+| Hindi      | 35,21        | 30,93        | 51,06          | 11,07         | 62,1            |
+| Russian    | 60,49        | 55,09        | 68,33          | 9,47          | 73,12           |
+| Thai       | 37,28        | 31,2         | 27,63          | 10,04         | 65,21           |
+| Turkish    | 31,09        | 23,83        | 44,62          | 16,76         | 65,34           |
+| Vietmanese | 43,14        | 35,52        | 64,49          | 24,63         | 73,44           |
+| Chinese    | 34,86        | 28,68        | 52,71          | 8,15          | 65,68           |
+| Romanian   | 56,62        | 43,69        | 69,31          | 20,03         | 74,78           |
+| Average    | 49,02        | 41,95        | 59,46          | 20,30         | 69,16           |
+
+#### Exact Match:
+|            | **CANINE-C** | **CANINE-S** | **mBERT-base** | **BERT-base** | **XLM-RoBERTa** |
+|:----------:|:------------:|:------------:|:--------------:|:-------------:|:---------------:|
+| English    | 67,38        | 66,34        | 79,51          | 69,57         | 72,18           |
+| Arabic     | 26,25        | 13,75        | 37,22          | 4             | 45,79           |
+| German     | 43,16        | 38,27        | 50,84          | 4,9           | 55,21           |
+| Greek      | 29,14        | 13,42        | 40,16          | 5,37          | 53,19           |
+| Spanish    | 42,74        | 39,57        | 54,45          | 4,7           | 56,3            |
+| Hindi      | 18,93        | 16,54        | 36,97          | 4,8           | 45,042          |
+| Russian    | 43,48        | 35,65        | 52,1           | 4,62          | 55,54           |
+| Thai       | 20,5         | 17,91        | 21,26          | 2,6           | 54,28           |
+| Turkish    | 14,8         | 10,11        | 29,41          | 4,87          | 48,85           |
+| Vietmanese | 25,17        | 19,65        | 45,21          | 7,64          | 54,02           |
+| Chinese    | 21,36        | 20,2         | 42,26          | 3,1           | 55,63           |
+| Romanian   | 39,98        | 26,5         | 54,62          | 6,21          | 61,26           |
+| Average    | 32,74        | 26,49        | 45,33          | 10,20         | 53,19           |
+
 
 ### Discussion
 
