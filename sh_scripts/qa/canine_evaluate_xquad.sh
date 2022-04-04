@@ -3,7 +3,7 @@
 source ../env/bin/activate
 
 rm -rf canine_mva
-git clone https://"${GITHUB_TOKEN}"@github.com/chloeskt/canine_mva.git
+git clone https://github.com/chloeskt/canine_mva.git
 cd canine_mva
 
 LANGUAGES=('xquad.en' 'xquad.ar' 'xquad.de' 'xquad.zh' 'xquad.vi' 'xquad.es' 'xquad.hi' 'xquad.el' 'xquad.th' 'xquad.tr' 'xquad.ru' 'xquad.ro')
