@@ -14,6 +14,8 @@ We created these scripts in order to easily change the parameters. It is similar
 did zero-shot transfer.
 - ```bert_like_evaluate_xquad.sh```: evaluate BERT-like models (BERT, mBERT and XLM-RoBERTa) on XQuAD in a zero-shot learning setting.
 
+Please note that these scripts must be run in the **current directory** ! 
+
 ## Variables
 
 Please note that before running the scripts, you **must** check the variables that are set inside each script (usually ``MODEL_PATH`` 

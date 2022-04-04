@@ -28,6 +28,7 @@ def train(
     learning_rate: float,
     max_answer_length: int,
     n_best_size: int,
+    output_dir: str,
     best_f1: float = np.Inf,
     lr_scheduler=None,
     drive: bool = True,
@@ -115,9 +116,9 @@ def train(
             best_epoch = epoch
 
             # Saving the model
-            path_to_model = f"/mnt/hdd/canine/models/CANINE_lr_{learning_rate}_val_loss_{val_loss}_f1_{best_f1}_acc_{val_acc}_ep_{best_epoch}.pt"
+            path_to_model = f"{output_dir}/CANINE_lr_{learning_rate}_val_loss_{val_loss}_f1_{best_f1}_acc_{val_acc}_ep_{best_epoch}.pt"
             if drive:
-                path_to_model = f"/content/drive/MyDrive/models/CANINE_lr_{learning_rate}_val_loss_{val_loss}_f1_{best_f1}_acc_{val_acc}_ep_{best_epoch}.pt"
+                path_to_model = f"/content/drive/MyDrive/{output_dir}/CANINE_lr_{learning_rate}_val_loss_{val_loss}_f1_{best_f1}_acc_{val_acc}_ep_{best_epoch}.pt"
             torch.save(model.state_dict(), path_to_model)
             print("The model has been saved in {}".format(path_to_model))
             print("\n")
