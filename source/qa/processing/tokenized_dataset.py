@@ -100,7 +100,6 @@ class TokenizedDataset:
 
             # now if for this example we have an overflow
             # create new example with this overflow
-            # TODO: handle cases where more than 1 overflow is required
             if len(tokenized_examples["overflowing_tokens"][i]) != 0:
 
                 # get example id needed for evaluation purposes
