@@ -25,5 +25,3 @@ python source/qa/main.py \
   --lr_scheduler True \
   --drive False \
   --clipping False \
-
-rm -rf canine_mva
