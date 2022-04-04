@@ -13,3 +13,11 @@ We created these scripts in order to easily change the parameters. It is similar
 - ```canine_evaluate_xquad.sh```: evaluate finetuned CANINE model on XQuAD dataset. In our experiments, CANINE was finetuned on SQuADv2 and we
 did zero-shot transfer.
 - ```bert_like_evaluate_xquad.sh```: evaluate BERT-like models (BERT, mBERT and XLM-RoBERTa) on XQuAD in a zero-shot learning setting.
+
+## Variables
+
+Please note that before running the scripts, you **must** check the variables that are set inside each script (usually ``MODEL_PATH`` 
+and ``OUTPUT_DIR``) and modify it to our convenience.
+
+- ```OUTPUT_DIR```: directory in each the trained model will be stored after finetuning
+- ```MODEL_PATH```: path toward our finetuned model.
