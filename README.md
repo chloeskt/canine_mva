@@ -42,7 +42,8 @@ canine_mva
 - ``notebooks/qa``: the notebooks we used for our QA experiments. 
 - ``source/qa``: source code needed to prepare and train CANINE for Question Answering task. Also allows for zero-shot 
 transfer evaluation on XQuAD (for more information, refer to corresponding ``README.md``)
-- ``sh_scripts/qa``: collection of bash scripts to finetune and evaluate models on QA tasks.
+- ``sh_scripts/qa``: collection of bash scripts to finetune and evaluate models on QA tasks (for more information, refer 
+to corresponding ``README.md``)
 
 # NLI
 - ``source/nli``: source code needed to prepare and train CANINE and BERT for NLI task (for more information, refer to 
