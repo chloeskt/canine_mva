@@ -36,6 +36,51 @@ qa
 └── README.md
 ```
 
+## How to run experiments:
+
+Either take a look at the folder ```sh_scripts/qa```  or manually run the following commands (note that you must go back 
+to the **root** directory in that case):
+
+```bash
+# general setup
+git clone 
+cd canine_mva
+python -m venv env
+source env/bin/activate
+pip install -r requirements
+
+# To finetune CANINE on SQuADv2
+python source/qa/main.py \
+      --model_name google/canine-c \
+      --output_dir path_to_output_dir \
+      --doc_stride 512 \
+      --max_length 2048 \
+      --max_answer_length 256 \
+      --n_best_size 20 \
+      --batch_size 6 \
+      --learning_rate 5e-5 \
+      --weight_decay 0.01 \
+      --nb_epochs 5 \
+      --warmup_proportion 0.1 \
+      --best_f1 68.\
+      --squad_v2 True \
+      --freeze False \
+      --lr_scheduler True \
+      --drive False \
+      --clipping False 
+
+# To evaluate our finetuned CANINE model on xquad.de
+python source/qa/canine_evaluate_xquad.py \
+      --model_path path_towards_your_pretrained_model \
+      --language xquad.de \
+      --max_answer_length 256 \
+      --max_length 2048 \
+      --doc_stride 512 \
+      --n_best_size 20 \
+      --batch_size 8 \
+      --device cuda 
+```
+
 ## Complementary folders
 
 - ```notebooks/qa```: notebooks to finetune CANINE model on SQuAD like dataset and notebook to reproduce CANINE paper 
@@ -49,7 +94,7 @@ For further information, please refer to the corresponding ```README.md```.
 
 All finetuned models used in these experiments can be found [here](https://drive.google.com/drive/folders/1JVR6J8OjSTQ66fBseqHsSzoryTCQXVO_?usp=sharing).
 
-## Results/Observations
+## Results \& Observations
 
 ### Finetuning on SQuADv2
 
