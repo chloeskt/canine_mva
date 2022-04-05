@@ -1,5 +1,4 @@
 import sys
-from builtins import str
 from dataclasses import field, dataclass
 from pathlib import Path
 from typing import Tuple, List

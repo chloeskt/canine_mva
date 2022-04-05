@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
 
-from source.qa import TokenizedDataset
+from .tokenized_dataset import TokenizedDataset
 
 
 class QADataset(Dataset):
