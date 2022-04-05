@@ -1,6 +1,7 @@
 datasets==1.18.3
 jupyter==1.0.0
 keras==2.8.0
+nlpaug==1.1.10
 numpy==1.22.2
 pandas==1.4.1
 tensorflow==2.8.0

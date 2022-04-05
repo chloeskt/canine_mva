@@ -70,15 +70,43 @@ python source/qa/main.py \
       --clipping False 
 
 # To evaluate our finetuned CANINE model on xquad.de
-python source/qa/canine_evaluate_xquad.py \
+python source/qa/canine_evaluation.py \
       --model_path path_towards_your_pretrained_model \
+      --dataset_name xquad \
+      --data_dir None \
+      --huggingface_model_checkpoint name_of_hugging_face_checkpoint \
       --language xquad.de \
+      --squad_v2 False \
       --max_answer_length 256 \
       --max_length 2048 \
       --doc_stride 512 \
       --n_best_size 20 \
       --batch_size 8 \
       --device cuda 
+      
+# To create a noisy version of SQuADv2
+python3 source/qa/processing/noisifier.py \
+      --dataset_name squad_v2 \
+      --output_dir path_to_output_dir \
+      --noise_level 0.1 \
+      --augmenter_type KeyboardAug
+      
+      
+# To evaluate our finetuned CANINE model on noisy validation/test set of SQuADv2 (created above)
+python source/qa/canine_evaluation.py \
+      --model_path path_towards_your_pretrained_model \
+      --dataset_name noisy \
+      --data_dir path_to_directory_containing_noisy_data \
+      --huggingface_model_checkpoint name_of_hugging_face_checkpoint \
+      --language xquad.en \
+      --squad_v2 True \
+      --max_answer_length 256 \
+      --max_length 2048 \
+      --doc_stride 512 \
+      --n_best_size 20 \
+      --batch_size 8 \
+      --device cuda 
+ 
 ```
 
 ## Complementary folders
