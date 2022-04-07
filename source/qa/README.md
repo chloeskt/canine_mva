@@ -144,8 +144,8 @@ They were trained with the following parameters:
 
 |          | **CANINE-C** | **CANINE-S** | **mBERT** | **BERT** | **XLM-RoBERTa** |
 |:--------:|:------------:|:------------:|:---------:|:--------:|:---------------:|
-| F1-score | 74,1         | 70,3         | 77,51     | 76,02    | 78,3            |
-| EM score | 69,2         | 66,12        | 74,1      | 73,08    | 75,12           |
+| F1-score | 74,1         |     72,5     | 77,51     | 76,02    | 78,3            |
+| EM score | 69,2         |     69,6     | 74,1      | 73,08    | 75,12           |
 
 In this settings, CANINE performs decently well  (especially CANINE-c i.e. CANINE trained with Autoregressive Character Loss).
 
