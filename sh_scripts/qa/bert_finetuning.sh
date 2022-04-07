@@ -3,7 +3,7 @@ set -eux
 
 OUTPUT_DIR="/mnt/hdd/canine/models/bert/"
 
-source ../env/bin/activate
+source ../../env/bin/activate
 
 pip uninstall transformers -y
 git clone https://github.com/huggingface/transformers

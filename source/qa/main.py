@@ -288,7 +288,7 @@ if __name__ == "__main__":
         train_losses,
         "\n",
         "List of validation losses: ",
-        val_losses
+        val_losses,
     )
     print(
         "---------------------------------------------------------------------------------------------------------"
