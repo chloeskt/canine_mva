@@ -2,8 +2,8 @@
 
 ## Organization
 
-This subfolder contains the whole code associated with the Question Answering experiments. It can developed by Chloé Sekkat
-and it can be viewed as a Python package whose main functions/classes can be found in the ``__init__.py``.
+This subfolder contains the whole code associated with the Question Answering experiments. It has been developed by Chloé 
+Sekkat and can be viewed as a Python package whose main functions/classes can be found in the ``__init__.py``.
 
 ## Description
 
