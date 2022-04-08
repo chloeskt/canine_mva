@@ -1,10 +1,10 @@
 #!/bin/bash
 set -eux
 
-MODEL_PATH="/mnt/hdd/canine/models/mbert/mbert_model.pt"
+MODEL_PATH="/mnt/hdd/canine/models/mbert/"
 OUTPUT_DIR="/mnt/hdd/canine/models/mbert/"
 
-source ../env/bin/activate
+source ../../env/bin/activate
 
 pip uninstall transformers -y
 git clone https://github.com/huggingface/transformers
