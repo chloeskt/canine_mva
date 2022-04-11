@@ -20,6 +20,10 @@ compared to BERT-like models (BERT, mBERT and XLM-RoBERTa).
 A second step is to assess its capacities of generalization in the context of zero-shot transfer. Finetuned on an English
 dataset and then directly evaluated on a multi-lingual dataset with 11 languages of various morphologies (XQuAD). 
 
+A third experiment is to test the abilities of CANINE to handle noisy inputs, especially noisy questions as in real life
+settings the questions are often noisy (misspellings, wrong grammar, etc - think of ASR systems or keyboard error while
+typing).
+
 ### Structure of the folder
 
 ```
@@ -126,16 +130,16 @@ They were trained with the following parameters:
 
 |                               | **BERT** | **mBERT** | **XLM-RoBERTa** | **CANINE-C** | **CANINE-S** |
 |:-----------------------------:|:--------:|:---------:|:---------------:|:------------:|:------------:|
-| Training time for 1 epoch     | 1h42     | 1h39      | 2h03            | 4h28         | 4h13         |
-| Batch size                    | 6        | 6         | 6               | 6            | 6            |
-| Learning Rate                 | 3e-5     | 3e-5      | 3e-5            | 5e-5         | 5e-5         |
-| Weigh decay                   | 0        | 0         | 0               | 0.01         | 0.1          |
-| Nb of epochs                  | 2        | 4         | 4               | 2            | 6            |
-| Number of training examples   | 132335   | 132335    | 132335          | 130303       | 130303       |
-| Number of validation examples | 12245    | 12245     | 12245           | 11861        | 11861        |
-| Max length                    | 348      | 348       | 348             | 2048         | 2048         |
-| Doc stride                    | 128      | 128       | 128             | 512          | 512          |
-| Max answer length             | 30       | 30        | 30              | 256          | 256          |
+| Training time for 1 epoch     | 1h42     | 1h39      |      2h03       | 4h28         | 4h13         |
+| Batch size                    | 6        | 6         |        6        | 6            | 6            |
+| Learning Rate                 | 3e-5     | 3e-5      |      3e-5       | 5e-5         | 5e-5         |
+| Weigh decay                   | 0        | 0         |        0        | 0.01         | 0.1          |
+| Nb of epochs                  | 2        | 4         |        4        | 2            | 6            |
+| Number of training examples   | 132335   | 132335    |     131823      | 130303       | 130303       |
+| Number of validation examples | 12245    | 12245     |      12165      | 11861        | 11861        |
+| Max length                    | 348      | 348       |       348       | 2048         | 2048         |
+| Doc stride                    | 128      | 128       |       128       | 512          | 512          |
+| Max answer length             | 30       | 30        |       30        | 256          | 256          |
 
 
 ## Results \& Observations
@@ -193,6 +197,36 @@ per word ratio close to one and almost no inflectional morphology.
 | Average    | 32,74        | 26,49        | 45,33          | 10,20         | 53,19           |
 
 
+### Noisy questions on SQuADv2
+
+In this experience, the goal is to evaluate the models' robustness of noise. To do so, we created 3 noisy versions of
+the SQuADv2 dataset where the questions have been artificially enhanced with noisy (in our case we chose ``RandomCharAug``
+from ``nlpaug`` library with action `substitute` but in our package 4 other types of noise have been developed - refer to `processing/noisifier.py`).
+
+Three levels of noise were chosen: 10\%, 20\% and 40\% (similar to NLI and Sentiment Analysis experiments). Each word
+gets transformed with probability $p$ into a misspelled version of it (see [nlpaug documentation](https://github.com/makcedward/nlpaug/blob/master/nlpaug/augmenter/char/random.py)
+for more information).
+
+The noise is **only** applied to the test set (on SQuADv2) made of 1187 examples. We compared the 5 models we finetuned 
+on the clean version of SQuADv2 (first experiment) on these 3 noisy datasets (on for each level of $p$). The following
+table gathers the results (averaged over 3 runs):
+
+| **Type of noise: RandomCharAug - substitute** 	| **Noise level 10%** 	|        	| **Noise level 20%** 	|        	| **Noise level 40%** 	 | 	        |
+|-----------------------------------------------	|---------------------	|--------	|---------------------	|--------	|-----------------------|----------|
+|                                               	| **F1 score**        	| **EM** 	| **F1 score**        	| **EM** 	| **F1 score**        	 | **EM** 	 |
+| **CANINE-C**                                  	| 69,64               	| 66,89  	| 67,88               	| 65,43  	| 66,03               	 | 63,9   	 |
+| **CANINE-S**                                  	| 72,25               	| 69,65  	| 70,3                	| 68,03  	| **67,18**           	 | 64,6   	 |
+| **BERT**                                      	| 73,68               	| 70,79  	| 71,22               	| 68,55  	| 66,42               	 | 63,74  	 |
+| **mBERT**                                     	| 74                  	| 70,75  	| 71,66               	| 68,46  	| 67,08               	 | 64,74  	 |
+| **XLM-RoBERTa**                               	| **74,54**           	| 71,61  	| **72,68**           	| 69,81  	| **67,12**           	 | 64,43  	 |
+
+Overall XLM-RoBERTa is a very powerful model, it is the best in all experiences we attempted. However it is worth 
+highlighting that once the noise level is high (i.e. > 40\%), both CANINE-C and CANINE-S perform similarly to BERT-like 
+models. CANINE-S is even better than mBERT and BERT. CANINE-S does seem to fairly robust to high level of 
+artificial noise. 
+
+Further experiments should be run with other types of noise to confirm these results.
+
 ### Discussion
 
 In our zero-shot transfer QA experiments, CANINE does not appear to perform as well as token-based transformers such as 
@@ -201,5 +235,6 @@ transfer especially to isolating languages (Thai, Chinese) and synthetic ones wi
 or non-concatenative (Arabic). CANINE works decently well for languages close enough to English, e.g. Spanish or German. 
 While mBERT and CANINE have both been pretrained on the top 104 languages with the largest Wikipedia using a MLM objective, 
 XLM-RoBERTa was pretrained on 2.5TB of filtered CommonCrawl data containing 100 languages. This might be a confounding 
-variable. Finally, we would have liked to evaluate CANINE on noisy QA dataset to see how it would perform in non-ideal 
-settings; our intuition is that it might be more robust to noise in the inputs. 
+variable. Also, CANINE-S seems to be robust to high level of artificial noise and even slightly better than BERT and 
+mBERT. Finally, one might also note that multilingual model do, overall, have better capacities of generalization and
+better scores on these Question Answering tasks.
