@@ -55,4 +55,4 @@ corresponding ``README.md``)
 - ``source/NER``: source code needed to prepare and train CANINE for NER task (for more information, refer to corresponding ``README.md``)
 
 # Sentiment Analysis:
-- ``notebooks/qa``: the notebooks we used for our QA experiments. 
+- ``notebooks/sa``: the notebooks we used for our SA experiments. 
