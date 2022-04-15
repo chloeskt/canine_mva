@@ -29,8 +29,10 @@ typing).
 ```
 qa
 ├── __init__.py
+├── main.py                         # Main script
 ├── canine_evaluate_xquad.py        # Script to evaluate CANINE on XQUaD dataset  
 ├── processing   
+    ├── noisifier.py                # Class to inject artificial noise to a SQuAD-like dataset
     ├── preprocessor.py             # Basic dataset preprocessor; note that the dataset you choose must have SQuAD format                     
     ├── qa_dataset.py               # Pytorch wrapper on our dataset                    
     └── tokenized_dataset.py        # Main class to prepare the dataset for the QA task
