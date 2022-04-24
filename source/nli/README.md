@@ -28,9 +28,22 @@ cd canine-mednli/nli
 python main.py --model canine --noisy True 
 ```
 
-For the NLI task on clean MedNLI we get an accuracy of 77.6% using BERT and an accuracy of 73.07% using CANINE. However when we add a noise with probability 0.4 to the test data, the performance of BERT drops to 59.92 while the accuarcy of CANINE drops only to 65.75. Training the models on noisy data results in an improvement for both models but CANINE is still preferred to BERT with a 1.4% difference in accuracy. This suggest that CANINE can be more suitable for noisy text than BERT, but for clean data we didn't see and advantadge for CANINE in this task.
+## Results
+Results on clean data:
+<div align="center">
+ 
+|Model | Test accuracy | 
+|   -   |   -  | 
+| BERT |**77.6<sub>±0.6</sub>** |
+| CANINE-C  | 73.07<sub>±0.3</sub> |
+ 
+</div>
 
-To do: 
- - [ ] add link to model weights
- - [ ] add table of results nstead of text
- - [ ] change .pth to .pt in path models
+Results of noise robustness experiments: the left plot correponds to training on clean data and testing on noisy data and the right plot corresponds to the training on noisy data as well
+<div align="center">
+ 
+<img width="710" alt="nli_noise2" src="https://user-images.githubusercontent.com/44069155/164975946-1f5c1ec8-b0d4-4e32-8860-62e31327eaa4.png">
+ 
+</div>
+
+For the NLI task on clean MedNLI we get an accuracy of 77.6% using BERT and an accuracy of 73.07% using CANINE. However when we add a noise with probability 0.4 to the test data, the performance of BERT drops to 59.92% while the accuarcy of CANINE drops only to 65.75%. Training the models on noisy data results in an improvement for both models but CANINE is still preferred to BERT with a 1.4% difference in accuracy. This suggests that CANINE can be more suitable for noisy text than BERT, but for clean data we didn't see and advantadge for CANINE in this task.
