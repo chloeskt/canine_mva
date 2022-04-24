@@ -1,6 +1,6 @@
 # CANINE for Medical Natural Language Inference on MedNLI data
 
-For this task, we are interested in Natural Language Inference (NLI) on medical data using CANINE, it was decelopped by Loubna Ben Allal. We want to predict the relation between a hypothesis and a premise as:  Entailement, Contraction or Neutral using [MedNLI](https://jgc128.github.io/mednli/), a medical dataset annotated by doctors for NLI. We will also use BERT.
+For this task, we are interested in Natural Language Inference (NLI) on medical data using CANINE, it was developped by Loubna Ben Allal. We want to predict the relation between a hypothesis and a premise as:  Entailement, Contraction or Neutral using [MedNLI](https://jgc128.github.io/mednli/), a medical dataset annotated by doctors for NLI. We will also use BERT.
 
 ## Data 
 Access for the data can be requested [here](https://jgc128.github.io/mednli/). It contains a training, validation and test set with pairs of sentences along with the label of their relation. The data must be placed in the folder `data/` . 
